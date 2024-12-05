@@ -41,6 +41,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            text-decoration: none;
         }
         .btn:hover {
             background: #388E3C;
@@ -61,29 +62,21 @@
     </style>
 </head>
 <body>
-
     <nav>
-        <div>
-            <h3>Manage Employees</h3>
-        </div>
-        <div>
-            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                @csrf
-            </form>
-        </div>
+        <h3>Manage Employees</h3>
+        <a href="{{ route('admin.dashboard') }}">Back to Dashboard</a>
     </nav>
 
     <div class="container">
         <h2>Employee List</h2>
-        <a href="{{ route('admin.employees.create') }}" class="btn">Add New Employee</a>
+        <a href="{{ route('employees.create') }}" class="btn">Add New Employee</a>
 
         <table>
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Email</th>
-                    <th>Role</th>
+                    <th>Position</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -92,13 +85,13 @@
                 <tr>
                     <td>{{ $employee->name }}</td>
                     <td>{{ $employee->email }}</td>
-                    <td>{{ $employee->role }}</td>
+                    <td>{{ $employee->position }}</td>
                     <td>
-                        <a href="{{ route('admin.employees.edit', $employee->id) }}">Edit</a>
-                        <form action="{{ route('admin.employees.destroy', $employee->id) }}" method="POST" style="display:inline;">
+                        <a href="{{ route('employees.edit', $employee->id) }}" class="btn">Edit</a>
+                        <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" style="display: inline-block;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit">Delete</button>
+                            <button type="submit" class="btn" style="background: #E53935;" onclick="return confirm('Are you sure?')">Delete</button>
                         </form>
                     </td>
                 </tr>

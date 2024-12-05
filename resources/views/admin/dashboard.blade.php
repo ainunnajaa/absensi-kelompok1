@@ -18,6 +18,7 @@
             padding: 10px 20px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
         nav a {
             color: white;
@@ -63,6 +64,16 @@
             background: #4CAF50;
             color: white;
         }
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -72,7 +83,7 @@
             <h3>Admin Dashboard</h3>
         </div>
         <div>
-            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            <a href="{{ route('logout') }}" onclick="event.preventDefault(); if(confirm('Are you sure you want to logout?')) document.getElementById('logout-form').submit();">Logout</a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
@@ -82,9 +93,10 @@
     <div class="container">
         <h2>Welcome to the Admin Dashboard</h2>
 
+        <!-- Summary Section -->
         <div class="actions">
-            <a href="" class="btn">Manage Employees</a>
-            <a href="" class="btn">View Attendance</a>
+            <a href="{{ route('employees.index') }}" class="btn">Manage Employees</a>
+            <a href="{{ route('attendance.index') }}" class="btn">View Attendance</a>
         </div>
 
         <h3>Recent Attendance Summary</h3>
@@ -98,15 +110,20 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Loop through attendance data -->
-                @foreach($attendances as $attendance)
-                <tr>
-                    <td>{{ $attendance->employee->name }}</td>
-                    <td>{{ $attendance->present_count }}</td>
-                    <td>{{ $attendance->absent_count }}</td>
-                    <td>{{ $attendance->late_count }}</td>
-                </tr>
-                @endforeach
+                @if($attendances->isEmpty())
+                    <tr>
+                        <td colspan="4" style="text-align: center;">No attendance data available</td>
+                    </tr>
+                @else
+                    @foreach($attendances as $attendance)
+                    <tr>
+                        <td>{{ $attendance->employee->name }}</td>
+                        <td>{{ $attendance->present_count }}</td>
+                        <td>{{ $attendance->absent_count }}</td>
+                        <td>{{ $attendance->late_count }}</td>
+                    </tr>
+                    @endforeach
+                @endif
             </tbody>
         </table>
     </div>

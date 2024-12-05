@@ -13,19 +13,19 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // Admin Routes
 Route::middleware(['auth', 'role:admin'])->group(function () {
-    // Admin Dashboard Route
-     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-});
-Route::middleware(['auth', 'role:admin'])->group(function () {
 
-    // CRUD Karyawan
-    Route::resource('admin/employees', EmployeeController::class);
-    
-    // Rekapitulasi Kehadiran
-    Route::get('admin/attendance', [AttendanceController::class, 'index'])->name('admin.attendance.index');
-    Route::get('admin/attendance/{employee}', [AttendanceController::class, 'show'])->name('admin.attendance.show');
-    Route::post('admin/attendance/{attendance}/update', [AttendanceController::class, 'update'])->name('admin.attendance.update');
-    Route::delete('admin/attendance/{attendance}/delete', [AttendanceController::class, 'destroy'])->name('admin.attendance.destroy');
+    // Dashboard
+    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+
+    // Employee Management (CRUD)
+    Route::resource('employees', EmployeeController::class);
+
+    // Attendance Management (CRUD)
+    Route::resource('attendance', AttendanceController::class);
+
+    // Rekapitulasi Kehadiran (View & Delete)
+    Route::get('attendance-summary', [AttendanceController::class, 'summary'])->name('attendance.summary');
+    Route::delete('attendance-summary/{id}', [AttendanceController::class, 'deleteSummary'])->name('attendance.summary.delete');
 });
 
 // User Routes
@@ -34,3 +34,4 @@ Route::middleware(['auth', 'role:user'])->group(function () {
         return 'User Dashboard';
     })->name('user.dashboard');
 });
+
