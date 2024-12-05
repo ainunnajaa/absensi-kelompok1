@@ -16,13 +16,19 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
+        // Attempt to authenticate the user
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
+            // Check the user role and redirect accordingly
             if ($user->role === 'admin') {
                 return redirect()->route('admin.dashboard');
             } elseif ($user->role === 'user') {
                 return redirect()->route('user.dashboard');
+            } else {
+                // If role is undefined or invalid, log the user out and show an error
+                Auth::logout();
+                return back()->with('error', 'Invalid role assigned to this account');
             }
         }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class EmployeeController extends Controller
 {
@@ -22,12 +23,20 @@ class EmployeeController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees',
-            // Validasi lainnya sesuai kebutuhan
+            'email' => 'required|email|unique:employees', // Email harus unik
+            'password' => 'required|string|min:8',       // Password minimal 8 karakter
+            'role' => 'required|in:admin,user',         // Role hanya bisa 'admin' atau 'user'
         ]);
 
-        Employee::create($request->all()); // Menyimpan data karyawan baru
-        return redirect()->route('admin.employees.index');
+        // Simpan data karyawan baru
+        Employee::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password), // Enkripsi password
+            'role' => $request->role,
+        ]);
+
+        return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
     }
 
     public function edit(Employee $employee)
@@ -40,16 +49,24 @@ class EmployeeController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:employees,email,' . $employee->id,
-            // Validasi lainnya sesuai kebutuhan
+            'password' => 'nullable|string|min:8', // Password opsional saat update
+            'role' => 'required|in:admin,user',
         ]);
 
-        $employee->update($request->all()); // Mengupdate data karyawan
-        return redirect()->route('admin.employees.index');
+        // Update data karyawan
+        $employee->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password ? Hash::make($request->password) : $employee->password, // Update password jika ada
+            'role' => $request->role,
+        ]);
+
+        return redirect()->route('employees.index')->with('success', 'Employee updated successfully.');
     }
 
     public function destroy(Employee $employee)
     {
         $employee->delete(); // Menghapus data karyawan
-        return redirect()->route('admin.employees.index');
+        return redirect()->route('employees.index')->with('success', 'Employee deleted successfully.');
     }
 }

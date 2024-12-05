@@ -1,73 +1,138 @@
 <?php
 
-// app/Http/Controllers/AttendanceController.php
-
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\Employee;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
-    // Menampilkan semua data kehadiran
+    // Dashboard untuk User
+    public function dashboard()
+    {
+        return view('user.dashboard');
+    }
+
+    // User Presensi Masuk
+    public function checkIn(Request $request)
+    {
+        $user = Auth::user();
+
+        // Cek apakah user sudah melakukan presensi masuk hari ini
+        $attendance = Attendance::where('user_id', $user->id)
+            ->whereDate('date', now()->toDateString())
+            ->first();
+
+        if ($attendance) {
+            return back()->with('error', 'You have already checked in today.');
+        }
+
+        // Simpan data presensi masuk
+        Attendance::create([
+            'user_id' => $user->id,
+            'date' => now()->toDateString(),
+            'check_in' => now()->toTimeString(),
+        ]);
+
+        return back()->with('success', 'You have successfully checked in.');
+    }
+
+    // User Presensi Pulang
+    public function checkOut(Request $request)
+    {
+        $user = Auth::user();
+
+        // Cari presensi hari ini
+        $attendance = Attendance::where('user_id', $user->id)
+            ->whereDate('date', now()->toDateString())
+            ->first();
+
+        if (!$attendance) {
+            return back()->with('error', 'You have not checked in today.');
+        }
+
+        if ($attendance->check_out) {
+            return back()->with('error', 'You have already checked out today.');
+        }
+
+        // Simpan waktu presensi pulang
+        $attendance->update([
+            'check_out' => now()->toTimeString(),
+        ]);
+
+        return back()->with('success', 'You have successfully checked out.');
+    }
+
+    // Rekap Kehadiran Bulanan User
+    public function attendanceSummary()
+    {
+        $user = Auth::user();
+
+        // Ambil data kehadiran untuk bulan ini
+        $attendances = Attendance::where('user_id', $user->id)
+            ->whereMonth('date', now()->month)
+            ->whereYear('date', now()->year)
+            ->get();
+
+        return view('user.attendance.summary', compact('attendances'));
+    }
+
+    // Admin: Menampilkan semua data kehadiran
     public function index()
     {
-        // Ambil data kehadiran semua karyawan
-        $attendances = Attendance::with('employee')->get(); // Use eager loading to get employee data
-
-        // Kirim data kehadiran ke view index
+        $attendances = Attendance::with('employee')->get(); // Eager loading untuk data employee
         return view('admin.attendance.index', compact('attendances'));
     }
 
-    // Menyimpan data absensi baru
-    public function store(Request $request)
-    {
-        // Validasi input
-        $request->validate([
-            'employee_id' => 'required|exists:employees,id', // Pastikan employee_id valid
-            'status' => 'required|in:present,absent,late', // Status hanya bisa 'present', 'absent', atau 'late'
-            'date' => 'required|date', // Validasi tanggal
-        ]);
-
-        // Menyimpan absensi baru
-        Attendance::create([
-            'employee_id' => $request->employee_id,
-            'status' => $request->status,
-            'date' => $request->date,
-        ]);
-
-        // Redirect ke halaman absensi setelah berhasil
-        return redirect()->route('attendance.index')->with('success', 'Attendance added successfully');
-    }
-
-    // Menampilkan form untuk menambah absensi baru
+    // Admin: Form Tambah Kehadiran
     public function create()
     {
-        // Mendapatkan semua data karyawan
-        $employees = Employee::all();
-        
-        // Mengirim data karyawan ke view create
+        $employees = Employee::all(); // Data semua karyawan
         return view('admin.attendance.create', compact('employees'));
     }
 
-    // Mengupdate data absensi
-    public function update(Request $request, Attendance $attendance)
+    // Admin: Menyimpan Kehadiran Baru
+    public function store(Request $request)
     {
-        // Update data absensi berdasarkan input
-        $attendance->update($request->all());
+        $request->validate([
+            'status' => 'required|in:present,absent,late',
+            'date' => 'required|date',
+            'check_in' => 'required|date_format:H:i',
+            'check_out' => 'nullable|date_format:H:i',
+        ]);
 
-        // Redirect ke halaman absensi setelah berhasil
-        return redirect()->route('attendance.index');
+        // Mendapatkan user yang sedang login
+        $user = Auth::user();
+
+        // Simpan data kehadiran baru
+        Attendance::create([
+            'employee_id' => $user->id, // Menggunakan ID karyawan yang sedang login
+            'status' => $request->status,
+            'date' => $request->date,
+            'check_in' => $request->check_in,
+            'check_out' => $request->check_out, // check_out bisa null jika belum pulang
+        ]);
+
+        return redirect()->route('attendance.index')->with('success', 'Attendance added successfully');
     }
 
-    // Menghapus data absensi
+    // Admin: Update Kehadiran
+    public function update(Request $request, Attendance $attendance)
+    {
+        $request->validate([
+            'status' => 'required|in:present,absent,late',
+        ]);
+
+        $attendance->update($request->all());
+        return redirect()->route('attendance.index')->with('success', 'Attendance updated successfully');
+    }
+
+    // Admin: Hapus Kehadiran
     public function destroy(Attendance $attendance)
     {
-        // Menghapus data absensi
         $attendance->delete();
-
-        // Redirect ke halaman absensi setelah berhasil
-        return redirect()->route('attendance.index');
+        return redirect()->route('attendance.index')->with('success', 'Attendance deleted successfully');
     }
 }
