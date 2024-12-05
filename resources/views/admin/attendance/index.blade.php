@@ -103,6 +103,11 @@
             text-align: center;
             margin-bottom: 20px;
         }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
     </style>
 </head>
 <body>
@@ -116,11 +121,15 @@
     </form>
 
     <div class="container">
-        <a href="{{ route('attendance.create') }}">Add New Attendance</a>
+        <a href="{{ route('admin.attendance.create') }}">Add New Attendance</a>
         <a href="{{ route('admin.dashboard') }}" class="btn">Back to Dashboard</a>  <!-- Corrected link -->
 
         @if(session('success'))
             <div class="message">{{ session('success') }}</div>
+        @endif
+
+        @if(session('error'))
+            <div class="message error">{{ session('error') }}</div>
         @endif
 
         <table>
@@ -137,10 +146,10 @@
                     <tr>
                         <td>{{ $attendance->employee->name }}</td>
                         <td>{{ $attendance->status }}</td>
-                        <td>{{ $attendance->date }}</td>
+                        <td>{{ $attendance->attendance_date }}</td>
                         <td>
-                            <a href="{{ route('attendance.edit', $attendance->id) }}">Edit</a>
-                            <form action="{{ route('attendance.destroy', $attendance->id) }}" method="POST" style="display:inline;">
+                            <a href="{{ route('admin.attendance.edit', $attendance->id) }}">Edit</a>
+                            <form action="{{ route('admin.attendance.destroy', $attendance->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit">Delete</button>

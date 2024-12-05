@@ -13,6 +13,13 @@ class Employee extends Authenticatable
     /**
      * Atribut yang dapat diisi (fillable).
      */
+    // Model Employee.php
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'email', 'email');  // Menghubungkan melalui email
+    }
+
+
     protected $fillable = [
         'name',       // Nama karyawan
         'email',      // Email karyawan
@@ -32,6 +39,12 @@ class Employee extends Authenticatable
     /**
      * Relasi: Seorang karyawan dapat memiliki banyak data kehadiran.
      */
+
+     public function hasRole($role)
+    {
+        return $this->role === $role;  // Mengembalikan true jika role karyawan sesuai dengan yang diberikan
+    }
+
     public function attendances()
     {
         return $this->hasMany(Attendance::class);

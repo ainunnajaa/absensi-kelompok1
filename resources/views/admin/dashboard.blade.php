@@ -96,7 +96,7 @@
         <!-- Summary Section -->
         <div class="actions">
             <a href="{{ route('employees.index') }}" class="btn">Manage Employees</a>
-            <a href="{{ route('attendance.index') }}" class="btn">View Attendance</a>
+            <a href="{{ route('admin.attendance.index') }}" class="btn">View Attendance</a>
         </div>
 
         <h3>Recent Attendance Summary</h3>
@@ -104,9 +104,9 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Present</th>
-                    <th>Absent</th>
-                    <th>Late</th>
+                    <th>Waktu Absen Masuk</th>
+                    <th>Waktu Absen Keluar</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -118,9 +118,16 @@
                     @foreach($attendances as $attendance)
                     <tr>
                         <td>{{ $attendance->employee->name }}</td>
-                        <td>{{ $attendance->present_count }}</td>
-                        <td>{{ $attendance->absent_count }}</td>
-                        <td>{{ $attendance->late_count }}</td>
+                        <td>{{ $attendance->check_in ? $attendance->check_in : '-' }}</td>
+                        <td>{{ $attendance->check_out ? $attendance->check_out : '-' }}</td>
+                        <td>
+                            <a href="{{ route('admin.attendance.edit', $attendance->id) }}" class="btn">Edit</a>
+                            <form action="{{ route('admin.attendance.destroy', $attendance->id) }}" method="POST" style="display: inline;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn" style="background: #f44336;">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                     @endforeach
                 @endif

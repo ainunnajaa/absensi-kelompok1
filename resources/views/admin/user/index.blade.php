@@ -3,73 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User List</title>
+    <title>User Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
-            background: #f4f4f9;
         }
-        table {
-            width: 100%;
-            margin: 20px;
-            border-collapse: collapse;
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
         }
-        table, th, td {
-            border: 1px solid #ddd;
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 20px;
         }
-        th, td {
-            padding: 12px;
-            text-align: left;
+
+        .profile-image {
+            margin: 20px 0;
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border: 6px solid #007bff;
         }
+
+        .card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        .card h2 {
+            font-size: 24px;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            font-size: 16px;
+            color: #555;
+        }
+
         .btn {
-            padding: 10px 15px;
-            background: #4CAF50;
-            color: white;
+            display: inline-block;
+            padding: 15px 35px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
             text-decoration: none;
-            border-radius: 5px;
+            margin: 15px 10px;
+            transition: background-color 0.3s ease;
         }
-        .btn-danger {
-            background: #f44336;
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #28a745;
+        }
+
+        .btn-secondary:hover {
+            background-color: #218838;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #aaa;
+            text-align: center;
+        }
+
+        .status-message {
+            font-size: 16px;
+            color: #28a745;
+            margin-top: 20px;
+        }
+
+        .status-error {
+            font-size: 16px;
+            color: #dc3545;
         }
     </style>
 </head>
 <body>
 
-    <h1>User List</h1>
-    <a href="{{ route('admin.users.create') }}" class="btn">Add User</a>
+    <div class="container">
+        <!-- Profile Image and Welcome Message -->
+        <img src="https://www.gravatar.com/avatar/{{ md5(Auth::user()->email) }}?s=150&d=mm" alt="User Profile Picture" class="profile-image">
+        <h1>Welcome, {{ Auth::user()->name }}</h1>
 
-    @if (session('success'))
-        <div>{{ session('success') }}</div>
-    @endif
+        <!-- Card Section -->
+        <div class="card">
+            <h2>Dashboard Overview</h2>
+            <p>Manage your attendance and view your profile details.</p>
+        </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($users as $user)
-            <tr>
-                <td>{{ $user->name }}</td>
-                <td>{{ $user->email }}</td>
-                <td>
-                    <a href="{{ route('admin.users.edit', $user) }}" class="btn">Edit</a>
-                    <form action="{{ route('admin.users.destroy', $user) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
+        <!-- Check In and Check Out Buttons -->
+        <form action="{{ route('user.attendance.checkin') }}" method="POST" style="margin-bottom: 20px;">
+            @csrf
+            <button type="submit" class="btn">Check In</button>
+        </form>
+
+        <form action="{{ route('user.attendance.checkout') }}" method="POST" style="margin-bottom: 20px;">
+            @csrf
+            <button type="submit" class="btn btn-secondary">Check Out</button>
+        </form>
+
+        <!-- Attendance Summary Link -->
+        <a href="{{ route('user.attendance.summary') }}" class="btn">View Monthly Attendance</a>
+
+        <!-- Success or Error Message -->
+        @if(session('success'))
+            <div class="status-message">{{ session('success') }}</div>
+        @elseif(session('error'))
+            <div class="status-error">{{ session('error') }}</div>
+        @endif
+    </div>
+
+    <footer>
+        &copy; 2024 Attendance System. All rights reserved.
+    </footer>
 
 </body>
 </html>

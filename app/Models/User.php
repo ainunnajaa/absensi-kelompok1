@@ -17,11 +17,25 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+     public function employee()
+     {
+         return $this->hasOne(Employee::class);
+     }
+
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',
     ];
+
+            // Di dalam model User (app/Models/User.php)
+        public function hasRole($role)
+        {
+            return $this->role === $role; // Misalnya, role disimpan dalam kolom `role`
+        }
+
 
     /**
      * The attributes that should be hidden for serialization.

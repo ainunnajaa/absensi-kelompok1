@@ -99,6 +99,11 @@
         .btn-back:hover {
             background: #d32f2f;
         }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -117,13 +122,26 @@
 
     <div class="container">
         <h2>Enter Attendance</h2>
-        <form action="{{ route('attendance.store') }}" method="POST">
+
+        <!-- Display Validation Errors -->
+        @if ($errors->any())
+            <div class="error">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('admin.attendance.store') }}" method="POST">
             @csrf
             <div class="form-group">
                 <label for="employee_id">Employee</label>
-                <!-- Display the logged-in user only -->
                 <select name="employee_id" id="employee_id" required>
-                    <option value="{{ auth()->user()->id }}" selected>{{ auth()->user()->name }}</option>
+                    @foreach($employees as $employee)
+                        <option value="{{ $employee->id }}">{{ $employee->name }}</option>
+                    @endforeach
                 </select>
             </div>
 
@@ -137,24 +155,24 @@
             </div>
 
             <div class="form-group">
-                <label for="date">Date</label>
-                <input type="date" name="date" id="date" required>
+                <label for="attendance_date">Date</label>
+                <input type="date" name="attendance_date" id="attendance_date" required>
             </div>
 
             <div class="form-group">
                 <label for="check_in">Check-in Time</label>
-                <input type="time" name="check_in" id="check_in" required>
+                <input type="time" name="check_in" id="check_in">
             </div>
 
             <div class="form-group">
                 <label for="check_out">Check-out Time</label>
-                <input type="time" name="check_out" id="check_out" required>
+                <input type="time" name="check_out" id="check_out">
             </div>
 
             <button type="submit" class="btn">Save Attendance</button>
         </form>
 
-        <a href="{{ route('attendance.index') }}" class="btn btn-back">Back to Attendance List</a>
+        <a href="{{ route('admin.attendance.index') }}" class="btn btn-back">Back to Attendance List</a>
     </div>
 
 </body>
