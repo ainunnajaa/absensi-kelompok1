@@ -16,10 +16,13 @@ class CreateAttendancesTable extends Migration
 public function up()
 {
     Schema::create('attendances', function (Blueprint $table) {
+       
         $table->id();
-        $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+        $table->string('attendance_name');
         $table->date('attendance_date');
-        $table->enum('status', ['present', 'absent', 'leave', 'holiday'])->default('present');
+        $table->time('check_in')->nullable();
+        $table->time('check_out')->nullable();
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
         $table->timestamps();
     });
 }

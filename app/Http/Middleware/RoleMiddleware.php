@@ -1,5 +1,6 @@
 <?php
 
+// app/Http/Middleware/RoleMiddleware.php
 namespace App\Http\Middleware;
 
 use Closure;
@@ -10,10 +11,12 @@ class RoleMiddleware
 {
     public function handle(Request $request, Closure $next, $role)
     {
-        if (Auth::check() && Auth::user()->role === $role) {
-            return $next($request);
+        if (Auth::check()) {
+            if (Auth::user()->role != $role) {
+                // Jika user tidak sesuai dengan role yang diminta, alihkan
+                return redirect('/');
+            }
         }
-
-        return redirect('/login')->with('error', 'Access Denied');
+        return $next($request);
     }
 }

@@ -33,16 +33,58 @@
         }
         h2 {
             color: #333;
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .btn {
-            padding: 10px 20px;
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        form label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        form input[type="text"],
+        form input[type="time"],
+        form input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        form input:focus {
+            border-color: #4CAF50;
+            outline: none;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        }
+
+        form button {
+            width: 100%;
+            font-size: 16px;
+            padding: 10px;
             background: #4CAF50;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background 0.3s;
         }
-        .btn:hover {
+
+        form button:hover {
             background: #388E3C;
         }
     </style>
@@ -62,27 +104,34 @@
     </nav>
 
     <div class="container">
-        <h2>Edit Attendance for {{ $attendance->employee->name }}</h2>
-        <form action="{{ route('attendance.update', $attendance->id) }}" method="POST">
+        <h2>Edit Attendance for {{ $attendance->judul_absensi }}</h2>
+        <form action="{{ route('admin.attendance.update', $attendance->id) }}" method="POST">
             @csrf
             @method('PUT')
+            
             <div>
-                <label for="present">Present</label>
-                <input type="number" name="present" id="present" value="{{ $attendance->present }}" required>
+                <label for="judul_absensi">Attendance Title</label>
+                <input type="text" name="judul_absensi" id="judul_absensi" value="{{ $attendance->judul_absensi }}" required>
             </div>
 
             <div>
-                <label for="absent">Absent</label>
-                <input type="number" name="absent" id="absent" value="{{ $attendance->absent }}" required>
+                <label for="check_in">Check-In Time</label>
+                <input type="time" name="check_in" id="check_in" value="{{ $attendance->check_in }}" required>
             </div>
 
             <div>
-                <label for="late">Late</label>
-                <input type="number" name="late" id="late" value="{{ $attendance->late }}" required>
+                <label for="check_out">Check-Out Time</label>
+                <input type="time" name="check_out" id="check_out" value="{{ $attendance->check_out }}" required>
             </div>
 
-            <button type="submit" class="btn">Update Attendance</button>
+            <div>
+                <label for="tanggal_absen">Attendance Date</label>
+                <input type="date" name="tanggal_absen" id="tanggal_absen" value="{{ $attendance->tanggal_absen }}" required>
+            </div>
+
+            <button type="submit">Update Attendance</button>
         </form>
     </div>
+
 </body>
 </html>

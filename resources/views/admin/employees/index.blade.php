@@ -85,7 +85,7 @@
                 <tr>
                     <td>{{ $employee->name }}</td>
                     <td>{{ $employee->email }}</td>
-                    <td>{{ $employee->position }}</td>
+                    <td>{{ $employee->role }}</td>
                     <td>
                         <a href="{{ route('employees.edit', $employee->id) }}" class="btn">Edit</a>
                         <form action="{{ route('employees.destroy', $employee->id) }}" method="POST" style="display: inline-block;">

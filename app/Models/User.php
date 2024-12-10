@@ -18,10 +18,10 @@ class User extends Authenticatable
      * @var array<int, string>
      */
 
-     public function employee()
-     {
-         return $this->hasOne(Employee::class);
-     }
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
 
     protected $fillable = [
         'name',
@@ -30,11 +30,11 @@ class User extends Authenticatable
         'role',
     ];
 
-            // Di dalam model User (app/Models/User.php)
-        public function hasRole($role)
-        {
-            return $this->role === $role; // Misalnya, role disimpan dalam kolom `role`
-        }
+    // Di dalam model User (app/Models/User.php)
+    public function hasRole($role)
+    {
+        return $this->role === $role; // Misalnya, role disimpan dalam kolom `role`
+    }
 
 
     /**

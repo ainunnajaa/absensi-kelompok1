@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -67,7 +68,8 @@
             margin-top: 20px;
         }
 
-        th, td {
+        th,
+        td {
             padding: 10px;
             border: 1px solid #ddd;
             text-align: left;
@@ -110,19 +112,21 @@
         }
     </style>
 </head>
+
 <body>
 
-    <h1>Attendance List</h1>
+    <h1>Dashboard Presensi</h1>
 
     <!-- Logout Button with form submission -->
-    <a href="#" class="logout-btn" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+    <a href="#" class="logout-btn"
+        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
         @csrf
     </form>
 
     <div class="container">
-        <a href="{{ route('admin.attendance.create') }}">Add New Attendance</a>
-        <a href="{{ route('admin.dashboard') }}" class="btn">Back to Dashboard</a>  <!-- Corrected link -->
+        <a href="{{ route('admin.attendance.create') }}">Menambah Presensi Baru</a>
+        <a href="{{ route('admin.dashboard') }}" class="btn">Kembali</a> <!-- Corrected link -->
 
         @if(session('success'))
             <div class="message">{{ session('success') }}</div>
@@ -135,21 +139,26 @@
         <table>
             <thead>
                 <tr>
-                    <th>Employee Name</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Actions</th>
+                    <th>Jumlah User</th>
+                    <th>Jenis Absensi</th>
+                    <th>Jam Masuk</th>
+                    <th>Jam Keluar</th>
+                    <th>Tanggal Absen</th>
+                    <th>Menu</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($attendances as $attendance)
                     <tr>
-                        <td>{{ $attendance->employee->name }}</td>
-                        <td>{{ $attendance->status }}</td>
-                        <td>{{ $attendance->attendance_date }}</td>
+                        <td>{{ $attendance->user_id }}</td>
+                        <td>{{ $attendance->judul_absensi }}</td>
+                        <td>{{ $attendance->check_in }}</td>
+                        <td>{{ $attendance->check_out }}</td>
+                        <td>{{ $attendance->tanggal_absen }}</td>
                         <td>
                             <a href="{{ route('admin.attendance.edit', $attendance->id) }}">Edit</a>
-                            <form action="{{ route('admin.attendance.destroy', $attendance->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('admin.attendance.destroy', $attendance->id) }}" method="POST"
+                                style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit">Delete</button>
@@ -162,4 +171,5 @@
     </div>
 
 </body>
+
 </html>

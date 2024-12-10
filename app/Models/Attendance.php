@@ -6,21 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Attendance extends Model
 {
-    
+
     use HasFactory;
 
     protected $fillable = [
-        'employee_id', 'status', 'attendance_date', 'check_in', 'check_out',
+        'judul_absensi',
+        'check_in',
+        'check_out',
+        'tanggal_absen', // Update kolom yang diisi
     ];
 
+    public $timestamps = false;
     // Relasi ke model Employee
-    public function employee()
+    public function user()
     {
-        return $this->belongsTo(Employee::class);
+        return $this->belongsTo(User::class); // jika menggunakan user_id
     }
 
-    public function hasRole($role)
-    {
-        return $this->role === $role; // Misalnya, peran disimpan di kolom `role`
-    }
 }

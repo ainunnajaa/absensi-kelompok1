@@ -91,22 +91,22 @@
     </nav>
 
     <div class="container">
-        <h2>Welcome to the Admin Dashboard</h2>
+        <h2>Selamat Datang di Admin Dashboard</h2>
 
         <!-- Summary Section -->
         <div class="actions">
-            <a href="{{ route('employees.index') }}" class="btn">Manage Employees</a>
-            <a href="{{ route('admin.attendance.index') }}" class="btn">View Attendance</a>
+            <a href="{{ route('employees.index') }}" class="btn">Data Karyawan</a>
+            <a href="{{ route('admin.attendance.index') }}" class="btn">Data Presensi</a>
         </div>
 
-        <h3>Recent Attendance Summary</h3>
+        <h3>Rekapan Data Karyawan</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Jumlah User</th>
                     <th>Waktu Absen Masuk</th>
                     <th>Waktu Absen Keluar</th>
-                    <th>Action</th>
+                    <th>Menu</th>
                 </tr>
             </thead>
             <tbody>
@@ -117,7 +117,7 @@
                 @else
                     @foreach($attendances as $attendance)
                     <tr>
-                        <td>{{ $attendance->employee->name }}</td>
+                        <td>{{ $attendance->user_id }}</td>
                         <td>{{ $attendance->check_in ? $attendance->check_in : '-' }}</td>
                         <td>{{ $attendance->check_out ? $attendance->check_out : '-' }}</td>
                         <td>

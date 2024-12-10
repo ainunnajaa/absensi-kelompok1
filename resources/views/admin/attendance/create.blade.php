@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Attendance</title>
+    <title>Attendance - User</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
@@ -64,7 +65,9 @@
             margin-bottom: 5px;
         }
 
-        select, input[type="date"], input[type="time"] {
+        select,
+        input[type="date"],
+        input[type="time"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -106,14 +109,16 @@
         }
     </style>
 </head>
+
 <body>
 
     <nav>
         <div>
-            <h3>Add Attendance</h3>
+            <h3>Menambah Presensi Baru</h3>
         </div>
         <div>
-            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            <a href="{{ route('logout') }}"
+                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                 @csrf
             </form>
@@ -121,9 +126,9 @@
     </nav>
 
     <div class="container">
-        <h2>Enter Attendance</h2>
+        <h2>Memasukkan Presensi Baru</h2>
 
-        <!-- Display Validation Errors -->
+        <!-- Tampilkan pesan error jika ada -->
         @if ($errors->any())
             <div class="error">
                 <ul>
@@ -134,46 +139,42 @@
             </div>
         @endif
 
+        <!-- Form untuk menambahkan absensi -->
         <form action="{{ route('admin.attendance.store') }}" method="POST">
             @csrf
+            <!-- Judul Absensi -->
             <div class="form-group">
-                <label for="employee_id">Employee</label>
-                <select name="employee_id" id="employee_id" required>
-                    @foreach($employees as $employee)
-                        <option value="{{ $employee->id }}">{{ $employee->name }}</option>
-                    @endforeach
-                </select>
+                <label for="judul_absensi">Judul Absensi</label>
+                <input type="text" name="judul_absensi" placeholder="Judul Absensi" required>
             </div>
 
+            <!-- Waktu Check-in -->
             <div class="form-group">
-                <label for="status">Status</label>
-                <select name="status" id="status" required>
-                    <option value="present">Present</option>
-                    <option value="absent">Absent</option>
-                    <option value="late">Late</option>
-                </select>
+                <label for="check_in">Jam Masuk</label>
+                <input type="time" name="check_in" id="check_in" required>
             </div>
 
+            <!-- Waktu Check-out -->
             <div class="form-group">
-                <label for="attendance_date">Date</label>
-                <input type="date" name="attendance_date" id="attendance_date" required>
+                <label for="check_out">Jam Keluar</label>
+                <input type="time" name="check_out" id="check_out" required>
             </div>
 
+            <!-- Tanggal Absen -->
             <div class="form-group">
-                <label for="check_in">Check-in Time</label>
-                <input type="time" name="check_in" id="check_in">
+                <label for="tanggal_absen">Tanggal Absensi</label>
+                <input type="date" name="tanggal_absen" id="tanggal_absen" required>
             </div>
 
-            <div class="form-group">
-                <label for="check_out">Check-out Time</label>
-                <input type="time" name="check_out" id="check_out">
-            </div>
-
-            <button type="submit" class="btn">Save Attendance</button>
+            <!-- Tombol Simpan Absensi -->
+            <button type="submit" class="btn">Simpan</button>
         </form>
 
-        <a href="{{ route('admin.attendance.index') }}" class="btn btn-back">Back to Attendance List</a>
+
+
+        <a href="{{ route('user.attendance.index') }}" class="btn btn-back">Back to Attendance List</a>
     </div>
 
 </body>
+
 </html>
